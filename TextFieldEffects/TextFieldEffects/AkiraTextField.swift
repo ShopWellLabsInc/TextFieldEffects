@@ -35,7 +35,7 @@ import UIKit
      */
     @IBInspectable dynamic open var placeholderColor: UIColor = .black {
         didSet {
-            updatePlaceholder()
+            updatePlaceholder(fontSize: 12)
         }
     }
     
@@ -46,13 +46,13 @@ import UIKit
      */
     @IBInspectable dynamic open var placeholderFontScale: CGFloat = 0.7 {
         didSet {
-            updatePlaceholder()
+            updatePlaceholder(fontSize: 12)
         }
     }
     
     override open var placeholder: String? {
         didSet {
-            updatePlaceholder()
+            updatePlaceholder(fontSize: 12)
         }
     }
     
@@ -66,36 +66,47 @@ import UIKit
     
     override open func drawViewsForRect(_ rect: CGRect) {
         updateBorder()
-        updatePlaceholder()
+        updatePlaceholder(fontSize: 22)
         
         addSubview(placeholderLabel)
         layer.addSublayer(borderLayer)
     }
     
     override open func animateViewsForTextEntry() {
+        
         UIView.animate(withDuration: 0.3, animations: {
             self.updateBorder()
-            self.updatePlaceholder()
+            self.updatePlaceholder(fontSize: 12)
         }, completion: { _ in
             self.animationCompletionHandler?(.textEntry)
         })
+        
     }
     
     override open func animateViewsForTextDisplay() {
+        
         UIView.animate(withDuration: 0.3, animations: {
             self.updateBorder()
-            self.updatePlaceholder()
+            
+            if (self.text?.count)! > 0 {
+                self.updatePlaceholder(fontSize: 12)
+            } else {
+                self.updatePlaceholder(fontSize: 22)
+            }
+            
         }, completion: { _ in
             self.animationCompletionHandler?(.textDisplay)
         })
+        
     }
     
     // MARK: Private
     
-    private func updatePlaceholder() {
+    private func updatePlaceholder(fontSize: CGFloat) {
+        
         placeholderLabel.frame = placeholderRect(forBounds: bounds)
         placeholderLabel.text = placeholder
-        placeholderLabel.font = placeholderFontFromFont(font!)
+        placeholderLabel.font = placeholderFontFromFont(fontSize: fontSize)//  placeholderFontFromFont(customFont!)
         placeholderLabel.textColor = placeholderColor
         placeholderLabel.textAlignment = textAlignment
     }
@@ -106,7 +117,14 @@ import UIKit
         borderLayer.borderColor = borderColor?.cgColor
     }
     
+    private func placeholderFontFromFont(fontSize: CGFloat) -> UIFont {
+        
+        let customFont = UIFont(name: "Avenir-Medium", size: fontSize)!
+        return customFont
+    }
+    
     private func placeholderFontFromFont(_ font: UIFont) -> UIFont! {
+        
         let smallerFont = UIFont(name: font.fontName, size: font.pointSize * placeholderFontScale)
         return smallerFont
     }
@@ -137,4 +155,5 @@ import UIKit
         return bounds.offsetBy(dx: textFieldInsets.x, dy: textFieldInsets.y + placeholderHeight/2)
     }
 }
+
 
