@@ -130,7 +130,7 @@ import UIKit
     }
     
     private var placeholderHeight : CGFloat {
-        return 15
+        return 17
     }
     
     private func rectForBounds(_ bounds: CGRect) -> CGRect {
@@ -143,7 +143,11 @@ import UIKit
         if isFirstResponder || text!.isNotEmpty {
             return CGRect(x: placeholderInsets.x, y: placeholderInsets.y, width: bounds.width, height: placeholderHeight)
         } else {
-            return textRect(forBounds: bounds)
+            
+            // To Make Text Field Center Initially
+            let y = (self.frame.size.height - placeholderLabel.frame.size.height) / 2.0
+            return CGRect(x: placeholderInsets.x, y: y, width: bounds.width, height: placeholderHeight)
+            
         }
     }
     
@@ -152,7 +156,13 @@ import UIKit
     }
     
     override open func textRect(forBounds bounds: CGRect) -> CGRect {
-        return bounds.offsetBy(dx: textFieldInsets.x, dy: textFieldInsets.y + placeholderHeight/2)
+        
+        var frame = bounds.offsetBy(dx: textFieldInsets.x, dy: textFieldInsets.y + placeholderHeight/2)
+        
+        //Text Rectangle frame size made 65 small as the long text overlaps the image in text field
+        frame.size.width = self.frame.size.width - 65
+        
+        return frame
     }
 }
 
